@@ -2,23 +2,26 @@ version: '3.9'
 
 services:
   app:
-    image: ubuntu:20.04  # Using a more recent version of Ubuntu
+    image: ubuntu:20.04
     container_name: sentrifugo_app
     ports:
-      - "80:80"  # Exposing port 80 to access the application via a web browser
+      - "80:80"
     volumes:
-      - ./sentrifugo:/var/www/html  # Mounting a volume to persist Sentrifugo data
-    command: /bin/bash -c "apt-get update && apt-get install -y software-properties-common gnupg2 && 
-              DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:ondrej/php -y && 
-              apt-get update && 
-              apt-get install -y php7.4 php7.4-fpm php7.4-mysql php7.4-gd nginx unzip wget && 
-              mkdir -p /var/log/supervisor /run/php /etc/nginx/sites-available /var/log/sentrifugo && 
-              echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && 
-              wget http://www.sentrifugo.com/home/downloadfile?file_name=Sentrifugo.zip -O Sentrifugo.zip && 
-              unzip Sentrifugo.zip -d /var/www/html && 
-              rm -rf Sentrifugo.zip && 
-              mv /var/www/html/Sentrifugo_3.2 /var/www/html/sentrifugo && 
-              chown -R www-data:www-data /var/www/html/sentrifugo && 
-              echo \"daemon off;\" >> /etc/nginx/nginx.conf && 
-              service php7.4-fpm start && 
-              nginx -g 'daemon off;'"
+      - ./sentrifugo:/var/www/html
+    command: >
+      /bin/bash -c "apt-get update &&
+      apt-get install -y software-properties-common gnupg2 &&
+      DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:ondrej/php -y &&
+      apt-get update &&
+      apt-get install -y php7.4 php7.4-fpm php7.4-mysql php7.4-gd nginx unzip wget &&
+      mkdir -p /var/log/supervisor /run/php /etc/nginx/sites-available /var/log/sentrifugo &&
+      echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections &&
+      wget http://www.sentrifugo.com/home/downloadfile?file_name=Sentrifugo.zip -O Sentrifugo.zip &&
+      unzip Sentrifugo.zip -d /var/www/html &&
+      rm -rf Sentrifugo.zip &&
+      mv /var/www/html/Sentrifugo_3.2 /var/www/html/sentrifugo &&
+      chown -R www-data:www-data /var/www/html/sentrifugo &&
+      sed -i '/daemon off;/d' /etc/nginx/nginx.conf && 
+      echo 'daemon off;' >> /etc/nginx/nginx.conf &&
+      service php7.4-fpm start &&
+      nginx"
