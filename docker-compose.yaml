@@ -82,4 +82,4 @@ services:
     chown:
         command: '-R www-data:www-data /sentrifugo/'
         image: chown
-CMD ["/usr/bin/supervisord"]
+
